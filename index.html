@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description"
+        content="SimDA">
+    <meta name="keywords" content="Text-to-Video, Diffusion Model">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SimDA</title>
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="icon" href="./static/images/favicon.svg">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+</head>
+
+<body>
+
+
+<section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">SimDA: Simple Diffusion Adapter for Efficient Video Generation</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://chenhsing.github.io">Zhen Xing</a><sup>1</sup>,</span>
+              <span class="author-block">
+                Qi Dai<sup>2</sup>,</span>
+              <span class="author-block">
+                Han Hu<sup>2</sup>,
+              </span>
+              <span class="author-block">
+                Zuxuan Wu<sup>1</sup>,
+              </span>
+              <span class="author-block">
+                Yu-Gang Jiang<sup>1</sup>
+              </span>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup> Fudan University,</span>
+              <span class="author-block"><sup>2</sup>MicroSoft Research Asia</span>
+            </div>
+  
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2308.09710"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2308.09710"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/ChenHsing/SimDA"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                    </a>
+                </span>
+
+              </div>
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+                The recent wave of AI-generated content has witnessed the great development and success of Text-to-Image (T2I) technologies.
+                By contrast, Text-to-Video (T2V) still falls short of expectations though attracting increasing interests.
+                Existing works either train from scratch or adapt large T2I model to videos, both of which are computation and resource expensive.
+               
+            </p>
+            <p>
+                In this work, we propose a Simple Diffusion Adapter (SimDA) that fine-tunes only 24M out of 1.1B parameters of a strong T2I model, adapting it to video generation in a parameter-efficient way.
+                In particular, we turn the T2I model for T2V by designing light-weight spatial and temporal adapters for transfer learning. Besides, we change the original spatial attention to the proposed Latent-Shift Attention (LSA) for temporal consistency.
+                 With similar model architecture, we further train a video super-resolution model to generate high-definition (1024x1024) videos.
+            </p>
+            <p>
+                In addition to T2V generation in the wild, 
+                SimDA could also be utilized in one-shot video editing with only 2 minutes tuning. Doing so, our method could minimize the training effort with extremely few tunable parameters for model adaptation.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+
+
+
+
+    <section class="section" id="results">
+        <center>
+            <h2 class="title is-3">Text-to-Video Generation Results</h2>
+        </center>
+        <center>
+            <table align="center">
+                <div class="large-4 columns">
+                </div>
+                <!-- <br> -->
+
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/A red Cardinal on a tree branch stands out when the snow is falling.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/A cat wearing sunglasses and working as a lifeguard at a pool, 4k, high resolution.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Time lapse at a fantasy landscape, 4k, high resolution.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/visual/Xmas christmas tree holiday celebration winter snow animation gold background.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A red Cardinal on a tree branch stands out when the snow is falling.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> A cat wearing sunglasses and working as a lifeguard at a pool.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Time lapse at a fantasy landscape, 4k, high resolution.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Xmas christmas tree holiday celebration winter snow animation gold background.</td>
+                </tr>
+
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/ A dog wearing virtual reality goggles on the grass 4k high resolution.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/ An astronaut flying in space 4k high resolution.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Aerial view over snow covered mountains, 4k, high resolution.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/visual/ A teddy bear wearing sunglasses playing the electric guitar high definition 4k.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A dog wearing virtual reality goggles on the grass, 4k, high resolution.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">  An astronaut flying in space, 4k, high resolution.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Aerial view over snow covered mountains.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A teddy bear wearing sunglasses playing the electric guitar high definition 4k.</td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/ fireworks being displayed for a crowd of people..gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/ a clownfish swimming through a coral reef.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Close up of grapes on a rotating table High definition.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/visual/Beer pouring into glass, low angle video shot.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">fireworks being displayed for a crowd of people.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">  a clownfish swimming through a coral reef.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Close up of grapes on a rotating table.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Beer pouring into glass, low angle video shot.</td>
+                </tr>
+
+
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Standing on top a mountainside watching the sunset with the vivid pinks red orange showing from the fire colored sky.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Sea waves with foam on white tropical sandy beach.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/visual/Coffee pouring into a cup.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/visual/A beautiful sunrise on mars, Curiosity rover.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Standing on top a mountainside watching the sunset with the vivid pinks red orange showing from the fire colored sky.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Sea waves with foam on white tropical sandy beach.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Coffee pouring into a cup, 4K, high resolution.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A beautiful sunrise on mars, Curiosity rover.</td>
+                </tr>
+
+
+            </table>
+        </center>
+    </section>
+
+
+    <section class="section" id="results">
+        <center>
+            <h2 class="title is-3">Text guided Video Editting Results</h2>
+        </center>
+        <center>
+            <table align="center">
+                <div class="large-4 columns">
+                </div>
+                <br>
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/edit/a jeep car is moving on the road.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/an AE86 car is moving on the road..gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a jeep car is moving on the road, cartoon style.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a jeep car is moving in a forest, at Autumn.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">a jeep car is moving on the road.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">  an <strong> AE86 </strong> car is moving on the road.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">a jeep car is moving on the road, <strong>cartoon style</strong> .</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> a jeep car is moving in a <strong>forest, in Autumn.</strong></td>
+                </tr>
+
+                <br>
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/edit/a jeep car is moving on the road in a snow day.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a Porsche sports car is moving on the road.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a jeep car is moving on the road, van Gogh’s style.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a jeep car is moving on the desert at night.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">a jeep car is moving on the road <strong>in a snow day</strong></td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> a <strong>Porsche sports</strong> car is moving on the road.</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">a jeep car is moving on the road,<strong> van Gogh’s style</strong> .</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> a jeep car is moving on the <strong>desert at dark</strong>.</strong></td>
+                </tr>
+
+                <br>
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/edit/a man is dribbling a basketball.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/wonder woman, wearing a cowboy hat, is dribbling a basketball.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/Kobe Bryant is dribbling a basketball on the grass.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/James Bond is dribbling a basketball on the beach.gif"></td>
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">a man is dribbling a basketball</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> <strong>wonder woman, wearing a cowboy hat,</strong> is dribbling a basketball</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"><strong>Kobe Bryant </strong>is dribbling a basketball <strong>on the grass.</strong></td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> <strong>James Bond</strong>  is dribbling a basketball <strong>on the beach </strong> </td>
+                </tr>
+
+                <br>
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400"
+                            src="assets/edit/a black swan is swiming in a pool..gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a black swan is swiming in a snowy winter..gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                                height="400" src="assets/edit/a swarovski blue crystal swan is swiming in a pool..gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="400"
+                            height="400" src="assets/edit/a yellow duck is swiming in a pool..gif"></td>
+            
+                </tr>
+                <tr>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A black swan is swiming in a pool</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">A black swan is swiming in <strong>a snowy winter</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> A <strong>swarovski blue crystal </strong> is swiming in a pool</td>
+                    <td width="400" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"> A <strong>yellow duck</strong>  is swinming in a pool </td>
+                </tr>
+            </table>
+        </center>
+    </section>
+
+
+
+    <section class="section" id="t2v_comp">
+        <center>
+            <h2 class="title is-3">Text-to-Video Generation Comparison</h2>
+        </center>
+        <center>
+            <table align="center">
+                <div class="large-4 columns">
+                </div>
+                <br>
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px"> VDM[1]</td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/002.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/004.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/003.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/011.webp"></td>
+                </tr>
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px"> CogVideo[2]</td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/Mountain_river.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/path_in_a_tropical_forest.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/snowfall_in_city.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/Forest_in_Autumn.webp">
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">VideoFusion[3]</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/river.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/path.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/snow.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/videofusion/autumn.gif">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">LVDM[4]</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/Mountain_river_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/path_in_a_tropical_forest_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/snowfall_in_city_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/lvdm/Forest_in_Autumn_seed01000_000_1x16x256x256x3.gif">
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">Ours</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/Mountain river.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/path in a tropical forest.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/snowfall in city.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/adapter/Forest in Autumn.gif">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"></td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Mountain river.</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">path in a tropical forest.</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">snowfall in city.</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:100px">Forest in Autumn.</td>
+                </tr>
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px"> VDM[1]</td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/4K_Illuminated_Christmas_Tree_at_Night_During_Snowstorm.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/Dramatic_ocean_sunset.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/Irrigation_Canal_in_Western_USA_Water_Sourced_from_the_Colorado_River_4K_Aerial_Video.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/vdm/029.webp"></td>
+                </tr>
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px"> CogVideo[2]</td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/4K_Illuminated_Christmas_Tree_at_Night_During_Snowstorm (1).webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/Dramatic_ocean_sunset.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/Irrigation_Canal_in_Western_USA_Water_Sourced_from_the_Colorado_River_4K_Aerial_Video.webp"></td>
+                    <td align="left" style="padding-left: 0px;"><img class="center" width="256" height="256"
+                            src="assets/t2v/cogvideo/fire.webp">
+                    </td>
+                </tr>
+ 
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">VideoFusion[3]</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/Chrismas.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/sunset.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/videofusion/Irrigation.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/videofusion/fire.gif">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">LVDM[4]</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/4K_illuminated_Christmas_Tree_at_Night_During_Snowstorm_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/Dramatic_ocean_sunrise_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/lvdm/Irrigation_Canal_in_Western_USA_Water_sourced_from_the_Colorado_River_4K_Aerial_Video_seed01000_000_1x16x256x256x3.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/lvdm/fire_seed01000_000_1x16x256x256x3.gif">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:20px; padding-top:110px">Ours</td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/4K illuminated Christmas Tree at Night During Snowstorm.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/Dramatic ocean sunset.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/t2v/adapter/Irrigation Canal in Western USA Water sourced from the Colorado River 4K Aerial Video.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256"
+                            src="assets/t2v/adapter/fire.gif">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px"></td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">4K Illuminated Christmas Tree at Night During Snowstorm</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Dramatic ocean sunset</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:20px">Irrigation Canal in Western USA Water Sourced from the Colorado River 4K Aerial Video</td>
+                    <td width="256" valign="middle" halign="middle" align="center"
+                        style="font-size:13px; padding-bottom:100px">fire</td>
+                </tr>
+                
+            </table>
+        </center>
+    </section>
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+          <h2 class="title">BibTeX</h2>
+          <p> If you use our work in your research, please cite: </p>
+          <pre><code>
+            @misc{xing2023simda,
+            title={SimDA: Simple Diffusion Adapter for Efficient Video Generation}, 
+            author={Zhen Xing and Qi Dai and Han Hu and Zuxuan Wu and Yu-Gang Jiang},
+            year={2023},
+            eprint={2308.09710},
+            archivePrefix={arXiv},
+            primaryClass={cs.CV}}
+      </code></pre>
+        </div>
+      </section>
+
+
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <a class="icon-link" href="#">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content">
+                        <p>[1] Jonathan Ho, Tim Salimans, Alexey A Gritsenko, William Chan, Mohammad Norouzi, and David
+                            J Fleet. Video
+                            diffusion models. In
+                            ICLR, 2022.</p>
+                        <p>[2] Wenyi Hong, Ming Ding, Wendi Zheng, Xinghan Liu, and Jie Tang. Cogvideo: Large-scale
+                            pretraining for
+                            text-to-video generation
+                            via transformers. In ICLR, 2023.</p>
+                        <!-- <p>[3] An, Jie and Zhang, Songyang and Yang, Harry and Gupta, Sonal and Huang, Jia-Bin and Luo, Jiebo and Yin, Xi.
+                             Latent-Shift: Latent Diffusion with Temporal Shift for Efficient Text-to-Video Generation. In Arxiv, 2023.</p> -->
+
+                        <p>[3] Luo, Zhengxiong and Chen, Dayou and Zhang, Yingya and Huang, Yan and Wang, Liang and Shen, Yujun and Zhao, Deli and Zhou, Jingren and Tan, Tieniu
+                            VideoFusion: Decomposed Diffusion Models for High-Quality Video Generation. In CVPR, 2023.</p>
+                            
+                        <p>[4] He, Yingqing, et al. "Latent video diffusion models for high-fidelity video generation with arbitrary lengths." arXiv preprint(2022).</p>
+                            
+        
+                        <hr>
+                        <p>
+                            Tempolate from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, thanks!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+</body>
