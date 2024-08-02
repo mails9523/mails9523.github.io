@@ -7,7 +7,7 @@
         content="RMTF">
     <meta name="keywords" content="Text-to-Video, Diffusion Model">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RMTF</title>
+    <title>RDTF</title>
 
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
@@ -42,10 +42,35 @@
         <div class="columns is-centered">
           <div class="column has-text-centered">
             <h2 class="title is-2 publication-title">
-                <img class="center" width="80" height="20" src="assets/RMTF1.png">
-                A Resource-Efficient Multi-Stage Training Framework for Animated Sticker Generation
+                <img class="center" width="100" height="35" src="assets/RDTF.png">
+                Resource-Efficient Dual-Mask Training Framework for Animated Sticker Generation
             </h2>
             <div class="is-size-5 publication-authors">
+
+                            <div class="column has-text-centered">
+              <div class="publication-links">
+
+
+                <span class="link-block">
+                  <a href=""
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv (Released Later)</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href=""
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                        <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code (Released Later)</span>
+                    </a>
+                </span>
+              </div>
  <!--
               <span class="author-block">
                 <a href="https://chenhsing.github.io">Zhen Xing</a><sup>1</sup>,</span>
@@ -117,19 +142,16 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-                The recent wave of AI-generated content has witnessed the great development and success of Text-to-Image (T2I) technologies.
-                By contrast, Text-to-Video (T2V) still falls short of expectations though attracting increasing interests.
-                Existing works either train from scratch or adapt large T2I model to videos, both of which are computation and resource expensive.
-               
+                Recently, great progress has been made in video generation technology, attracting the widespread attention of scholars.
+                To apply this technology to downstream applications under resource-constrained conditions, researchers often fine-tune pre-trained models based on parameter-efficient tuning methods such as Adapter or Lora.
+                Although these methods can transfer source domain knowledge to the target domain, fewer training parameters lead to poor fitting ability, and the source domain knowledge may cause the inference process to deviate from the target domain.
             </p>
             <p>
-                In this work, we propose a Simple Diffusion Adapter (SimDA) that fine-tunes only 24M out of 1.1B parameters of a strong T2I model, adapting it to video generation in a parameter-efficient way.
-                In particular, we turn the T2I model for T2V by designing light-weight spatial and temporal adapters for transfer learning. Besides, we change the original spatial attention to the proposed Latent-Shift Attention (LSA) for temporal consistency.
-                 With similar model architecture, we further train a video super-resolution model to generate high-definition (1024x1024) videos.
-            </p>
-            <p>
-                In addition to T2V generation in the wild, 
-                SimDA could also be utilized in one-shot video editing with only 2 minutes tuning. Doing so, our method could minimize the training effort with extremely few tunable parameters for model adaptation.
+                In this paper, we argue that under limited computing resources, training a smaller video generation model from scratch using only million-level samples can outperform parameter-efficient tuning on larger models in downstream applications: the core lies in the <i>effective utilize of data</i> and <i>curriculum strategy</i> .
+Take animated sticker generation (ASG) as an example, we construct a discrete frame generation network for stickers with low frame rates, ensuring that its parameters meet the requirements of model training under limited resources.
+In order to provide data support for models trained from scratch, we come up with a dual-mask based data utilization strategy, which manages to improve the availability and expand the diversity of limited data.
+To facilitate convergence under dual-mask situation, we propose a difficulty-adaptive curriculum learning method, which decomposes the sample entropy into static and adaptive components so as to obtain samples from easy to difficult.
+The proposed resource-efficient dual-mask training framework is quantitatively and qualitatively superior to efficient-parameter tuning methods such as I2V-Adapter and SimDA on the ASG task, verifying the feasibility of our method on downstream tasks under limited resources.
             </p>
           </div>
         </div>
@@ -140,6 +162,17 @@
     <section class="section" id="methods">
         <hr />
         <h2 class="title is-3">Method</h2>
+
+        <hr />
+            <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
+                    height="160" src="assets/fig1.jpg"></td>
+        <center>
+            <h5 class="title is-6">Exemplary results of animated sticker generation using our proposed approach, RDTF.
+Our method performs well on different generation tasks: (top) Text&image to GIF, (middle) Prediction, (down) Interpolation.
+Gray boxes indicate text or visual guidance.</h5>
+        </center>
+
+        <hr />
             <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
                     height="160" src="assets/overview.jpg"></td>
         <center>
@@ -147,6 +180,8 @@
 We adopt a model size that can be tolerated under constrained resources and propose a spatio temporal interaction layer to model the discreteness between animated stickers.
 Furthermore, the condition mask and loss mask are designed to enable the model can effectively utilize data through multi-task and short-frame data learning, and the curriculum learning is applied to improve training of resource-constrained model.</h5>
         </center>
+
+
     </section>
 
 
@@ -158,18 +193,6 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                 </div>
                 <br>
 
-                <tr>
-                    <td width="80" valign="middle" halign="middle" align="center"
-                        style="font-size:13px">Inputs:</td>
-                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
-                            height="160" src="assets/interpolation/104ea41e839d7a174382e757cbf4d889_ref.png"></td>
-                </tr>
-                <tr>
-                    <td width="80" valign="middle" halign="middle" align="center"
-                        style="font-size:13px; padding-bottom:20px">Outputs:</td>
-                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
-                            height="160" src="assets/interpolation/104ea41e839d7a174382e757cbf4d889_pred.png"></td>
-                </tr>
                 <tr>
                     <td width="80" valign="middle" halign="middle" align="middle"
                         style="font-size:13px; padding-bottom:20px">Inputs:</td>
@@ -186,13 +209,13 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     <td width="80" valign="middle" halign="middle" align="middle"
                         style="font-size:13px; padding-bottom:20px">Inputs:</td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
-                            height="160" src="assets/interpolation/bb1a82dc9e5791bd5a299a6e306b5051_ref.png"></td>
+                            height="160" src="assets/interpolation/632bec5e08f177cd9f37a353697b6626_ref.png"></td>
                 </tr>
                 <tr>
                     <td width="80" valign="middle" halign="middle" align="middle"
                         style="font-size:13px; padding-bottom:20px">Outputs:</td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="1280"
-                            height="160" src="assets/interpolation/bb1a82dc9e5791bd5a299a6e306b5051_pred.png"></td>
+                            height="160" src="assets/interpolation/632bec5e08f177cd9f37a353697b6626_pred.png"></td>
                 </tr>
             </table>
             <center>
@@ -244,7 +267,7 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     <td width="80" valign="middle" halign="middle" align="middle"
                         style="font-size:13px; padding-bottom:20px">Input Text:</td>
                     <td width="1280" valign="middle" halign="left" align="left"
-                        style="font-size:13px; padding-bottom:20px">这幅图像的特点是一个小卡通人物，很可能是一个孩子，手里拿着一颗心。这个角色看起来像是在微笑，传达着一种幸福或亲情的感觉。</td>
+                        style="font-size:13px; padding-bottom:20px">&nbsp;&nbsp;<i>A small cartoon character pointing at a heart </i></td>
                  </tr>
 
                 <tr>
@@ -265,7 +288,7 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     <td width="80" valign="middle" halign="middle" align="middle"
                         style="font-size:13px; padding-bottom:20px">Input Text:</td>
                     <td width="240" valign="middle" halign="left" align="left"
-                        style="font-size:13px; padding-bottom:20px">这张图片是一个可爱的卡通人物，手里拿着一颗心。这个角色看起来像是一只白色和棕色的泰迪熊。</td>
+                        style="font-size:13px; padding-bottom:20px">&nbsp;&nbsp;<i>A cute white cartoon teddy bear holding a heart in his hands</i></td>
                  </tr>
 
                 <tr>
@@ -296,6 +319,71 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
         <hr />
         <h2 class="title is-3">Compare to Other Methods</h2>
         </center>
+        <table align="center">
+                <div class="center-text">
+                </div>
+                <br>
+                <tr>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>Ref Image</b></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>Ref Text</b></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>Customize-A-Video [1]</b></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>I2V-Adapter [2]</b></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>SimDA [3]</b></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px"><b>Ours</b></td>
+                </tr>
+                <tr>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case1_ref.gif"></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px">A cute little girl in a pink bunny hat showing surprise and joy</td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case1_cav.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case1_i2vadapter.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case1_simda.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case1_our.gif"></td>
+                </tr>
+
+                <tr>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case2_ref.gif"></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px">A small cartoon character pointing at a heart</td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case2_cav.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case2_i2vadapter.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case2_simda.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case2_our.gif"></td>
+                </tr>
+
+                <tr>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case3_ref.gif"></td>
+                    <td width="145" valign="middle" halign="middle" align="center"
+                        style="font-size:14px">A yellow smiley face with two thumbs up, symbolizing approval, satisfaction or enthusiasm</td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case3_cav.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case3_i2vadapter.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case3_simda.gif"></td>
+                    <td align="center" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="145"
+                            height="145" src="assets/comp/case3_our.gif"></td>
+                </tr>
+
+            </table>
+
     </section>
 
     <section class="section" id="results">
@@ -341,6 +429,12 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                             height="256" src="assets/interpolation/4bf84d5ad334f785f198a76766a25025_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/interpolation/827589bfd6d21f29d71013c657023207_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/interpolation/5fdc05f233517d9aad9b15d8006cc833_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/interpolation/89757532a98a8a8aed76640a38045478_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/interpolation/cc5370973067744a6fb7d83e73725104_pred.gif"></td>
                 </tr>
 
             </table>
@@ -366,7 +460,9 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                             src="assets/frame_prediction/191ebc1fe1716b012caf75913c0bb0e9_pred.gif">
                     </td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
-                            height="256" src="assets/frame_prediction/337e01b404fe89993de375286e4e4b07_pred.gif"></td>
+                            height="256"
+                            src="assets/frame_prediction/5f3c66570b1b5101f3053e8157d20709_pred.gif">
+                    </td>
                 </tr>
 
 
@@ -374,13 +470,11 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/26109fcae83c64b6d77329e908f10bb4_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
-                            height="256" src="assets/frame_prediction/329865e5a656a70850ea8a43a78e0467_pred.gif"></td>
+                            height="256" src="assets/frame_prediction/4621f037f8ff6409657d45e792172f42_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/480419f7acc9acc2f46a88934490eed6_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
-                            height="256"
-                            src="assets/frame_prediction/b63432fbc1ea49da1e31175b3724d210_pred.gif">
-                    </td>
+                            height="256" src="assets/frame_prediction/2b160f995509b749f266dbddad18e115_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/8e7c4ba5bfaf3b84bb0cb946da022f87_pred.gif"></td>
                 </tr>
@@ -388,9 +482,7 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                 <tr>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/c1fb36426ca655f1766669c1879b588c_pred.gif"></td>
-                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
-                            height="256" src="assets/frame_prediction/cb572e531ac78bddbeccb94c33b8fc83_pred.gif"></td>
-                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/cc5370973067744a6fb7d83e73725104_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256"
@@ -398,6 +490,8 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     </td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/frame_prediction/f1a7af33eb110f9799a21f46a1014a22_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/frame_prediction/0840d548f8091e4f3e73ad391b89fcd6_pred.gif"></td>
                 </tr>
 
 
@@ -414,7 +508,7 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
 
                 <tr>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
-                            height="256" src="assets/it2v/7b76d5048adfbb7138ded6cebfd82793_pred.gif"></td>
+                            height="256" src="assets/it2v/cb572e531ac78bddbeccb94c33b8fc83_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/it2v/9b4cdab649a2fcc7b2411f669414e540_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
@@ -422,8 +516,29 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
                             height="256" src="assets/it2v/0ee0400d8437415f3dbc35ee40cb9678_pred.gif"></td>
                     <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="240"
-                            height="256" src="assets/it2v/b3726e12426a3b9100b42e33c294375f_pred.gif"></td>
+                            height="256" src="assets/it2v/7704813bc3914f9dbb6f0c5021e8ca8d_pred.gif"></td>
                 </tr>
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/27a47d68a1a98f18c63982e2040029a5_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/b26a618780c5b5442be0cd0f75e5898b_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/3bf1da9f274cace37564aeb88a43171d_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/337e01b404fe89993de375286e4e4b07_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/b63432fbc1ea49da1e31175b3724d210_pred.gif"></td>
+                </tr>
+
+                <tr>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/c9d58bb9264f1efd0cf17c07dba1da19_pred.gif"></td>
+                    <td align="left" style="padding-left: 0px; padding-bottom: 0px;"><img class="center" width="256"
+                            height="256" src="assets/it2v/5cac5ac1834f4e8f14230b366cc2c0fe_pred.gif"></td>
+                </tr>
+
 
             </table>
             <center>
@@ -440,11 +555,9 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
           <h2 class="title">BibTeX</h2>
           <p> If you use our work in your research, please cite: </p>
           <pre><code>
-            @misc{xing2023simda,
-            title={SimDA: Simple Diffusion Adapter for Efficient Video Generation},
-            author={Zhen Xing and Qi Dai and Han Hu and Zuxuan Wu and Yu-Gang Jiang},
-            year={2023},
-            eprint={2308.09710},
+            @misc{anonymous2024RDTF,
+            title={Resource-Efficient Dual-Mask Training Framework for Animated Sticker Generation},
+            author={Anonymous},
             archivePrefix={arXiv},
             primaryClass={cs.CV}}
       </code></pre>
@@ -488,6 +601,27 @@ Furthermore, the condition mask and loss mask are designed to enable the model c
         </div>
     </footer>
 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <a class="icon-link" href="#">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content">
+                        <p>[1] Ren, Y., Zhou, Y., Yang, J., Shi, J., Liu, D., Liu, F., ... & Shrivastava, A. (2024). Customize-A-Video: One-Shot Motion Customization of Text-to-Video Diffusion Models. CoRR.</p>
+
+                        <p>[2] Guo, X., Zheng, M., Hou, L., Gao, Y., Deng, Y., Wan, P., ... & Ma, C. (2024, July). I2V-Adapter: A General Image-to-Video Adapter for Diffusion Models. In ACM SIGGRAPH 2024 Conference Papers (pp. 1-12).</p>
+
+                        <p>[3] Xing, Z., Dai, Q., Hu, H., Wu, Z., & Jiang, Y. G. (2024). Simda: Simple diffusion adapter for efficient video generation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 7827-7839).</p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 
 </body>
