@@ -1,0 +1,7 @@
+# from .pipeline_text_to_video_synth_cn import CNTextToVideoSDPipeline
+# from .pipeline_text_to_video_synth_cn_input_sketch import CNTextToVideoSDPipeline as CNTextToVideoSDPipelineInputSketch
+# from .pipeline_text_to_video_synth_cn_by_random_sketch import CNTextToVideoSDPipeline as CNTextToVideoSDPipelineByRandomSketch
+# from .pipeline_text_to_video_synth_cn_by_random_sketch_qkv_guided import CNTextToVideoSDPipeline as CNTextToVideoSDPipelineByRandomSketchQKV
+# from .pipeline_text_to_video_by_video_composer import CNTextToVideoSDPipeline as CNTextToVideoSDPipelineByVideoComposer
+
+from .pipeline_i2vgen_xl import I2VGenXLPipeline

@@ -1,0 +1,31 @@
+{
+  "_class_name": "I2VGenXLUNet",
+  "_diffusers_version": "0.26.1",
+  "_name_or_path": "i2vgen-xl/unet",
+  "attention_head_dim": 64,
+  "block_out_channels": [
+    320,
+    640,
+    1280,
+    1280
+  ],
+  "cross_attention_dim": 1024,
+  "down_block_types": [
+    "CrossAttnDownBlock3D",
+    "CrossAttnDownBlock3D",
+    "CrossAttnDownBlock3D",
+    "DownBlock3D"
+  ],
+  "in_channels": 5,
+  "layers_per_block": 2,
+  "norm_num_groups": 32,
+  "num_attention_heads": 64,
+  "out_channels": 4,
+  "sample_size": 32,
+  "up_block_types": [
+    "UpBlock3D",
+    "CrossAttnUpBlock3D",
+    "CrossAttnUpBlock3D",
+    "CrossAttnUpBlock3D"
+  ]
+}
