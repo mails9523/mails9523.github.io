@@ -1,6 +1,6 @@
 # RDTF
 
-A project for generating text-based dynamic images.
+A project for generating text-based dynamic images (Under updating).
 
 ## Overview
 
